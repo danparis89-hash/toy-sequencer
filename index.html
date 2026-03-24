@@ -197,6 +197,55 @@
     text-shadow: none;
   }
 
+  /* Pattern bank buttons */
+  .bank-btns { display: flex; gap: 4px; align-items: center; }
+  .bank-btns .bank-label {
+    font-family: 'Press Start 2P', monospace;
+    font-size: 6px;
+    color: var(--text-dim);
+    margin-right: 2px;
+    text-transform: uppercase;
+  }
+  .bank-btn {
+    font-family: 'Press Start 2P', monospace;
+    font-size: 7px;
+    padding: 5px 8px;
+    border: 3px solid;
+    cursor: pointer;
+    background: var(--step-off);
+    color: var(--text);
+    border-color: #555 #222 #222 #555;
+    transition: none;
+    min-width: 20px;
+    text-align: center;
+  }
+  .bank-btn:hover { background: var(--step-hover); }
+  .bank-btn.bank-active {
+    border-color: #222 #555 #555 #222;
+    background: var(--accent);
+    color: #000;
+    text-shadow: none;
+  }
+
+  /* Record button */
+  .btn.rec-btn {
+    background: #331111;
+    border-color: #cc3333 #661111 #661111 #cc3333;
+    color: #cc3333;
+    letter-spacing: 1px;
+  }
+  .btn.rec-btn:hover { background: #441515; }
+  .btn.rec-btn.recording {
+    background: #cc2222;
+    color: #fff;
+    border-color: #ff4444 #881111 #881111 #ff4444;
+    animation: rec-pulse 1s ease-in-out infinite;
+  }
+  @keyframes rec-pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.6; }
+  }
+
   .btn.play-btn {
     background: #003322;
     border-color: var(--accent) #005533 #005533 var(--accent);
@@ -560,6 +609,32 @@
     border-color: var(--ch-accent);
     box-shadow: 0 2px 8px rgba(176, 125, 98, 0.25);
   }
+  .ch-bank-btns { display: flex; gap: 4px; align-items: center; }
+  .ch-bank-btns .bank-label {
+    font-family: 'Cormorant Garamond', Georgia, serif;
+    font-size: 12px; font-style: italic; font-weight: 600;
+    color: var(--ch-text-dim);
+    margin-right: 2px;
+  }
+  .ch-bank-btn {
+    font-family: 'Cormorant Garamond', Georgia, serif;
+    font-size: 13px; font-style: italic; font-weight: 600;
+    padding: 4px 12px;
+    border: 1px solid var(--ch-border);
+    border-radius: 8px;
+    cursor: pointer;
+    background: var(--ch-panel);
+    color: var(--ch-text);
+    transition: all 0.15s ease;
+    min-width: 20px; text-align: center;
+  }
+  .ch-bank-btn:hover { background: var(--ch-step-off); border-color: var(--ch-accent-soft); }
+  .ch-bank-btn.ch-bank-active {
+    background: var(--ch-accent);
+    color: #fff;
+    border-color: var(--ch-accent);
+    box-shadow: 0 2px 8px rgba(176, 125, 98, 0.25);
+  }
 
   .ch-tone-btns {
     display: flex;
@@ -888,6 +963,32 @@
     border-color: var(--hr-accent-soft);
     box-shadow: 0 0 10px var(--hr-glow);
   }
+  .hr-bank-btns { display: flex; gap: 4px; align-items: center; }
+  .hr-bank-btns .bank-label {
+    font-family: 'Space Mono', monospace;
+    font-size: 9px; font-weight: 700;
+    color: var(--hr-text-dim, rgba(200,200,255,0.5));
+    margin-right: 2px; text-transform: uppercase; letter-spacing: 0.5px;
+  }
+  .hr-bank-btn {
+    font-family: 'Space Mono', monospace;
+    font-size: 11px; font-weight: 700;
+    padding: 5px 10px;
+    border: 2px solid var(--hr-border);
+    cursor: pointer;
+    background: var(--hr-step-off);
+    color: var(--hr-text);
+    transition: all 0.1s;
+    min-width: 20px; text-align: center;
+    text-transform: uppercase; letter-spacing: 0.5px;
+  }
+  .hr-bank-btn:hover { background: var(--hr-step-hover); border-color: var(--hr-accent-soft); box-shadow: 0 0 10px var(--hr-glow); }
+  .hr-bank-btn.hr-bank-active {
+    background: var(--hr-accent);
+    color: #000;
+    border-color: var(--hr-accent);
+    box-shadow: 0 0 12px var(--hr-glow);
+  }
 
   .hr-vol-slider {
     -webkit-appearance: none;
@@ -1160,6 +1261,33 @@
     border-color: var(--kr-accent-dim);
   }
   .kr-btn.kr-selected {
+    background: var(--kr-accent);
+    color: #000;
+    border-color: var(--kr-accent);
+    text-shadow: none;
+    box-shadow: 0 0 12px var(--kr-glow);
+  }
+  .kr-bank-btns { display: flex; gap: 4px; align-items: center; }
+  .kr-bank-btns .bank-label {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 9px; font-weight: 700;
+    color: var(--kr-text-dim, rgba(200,255,200,0.4));
+    margin-right: 2px; text-transform: uppercase; letter-spacing: 1px;
+  }
+  .kr-bank-btn {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 11px; font-weight: 700;
+    padding: 5px 10px;
+    border: 2px solid var(--kr-border);
+    cursor: pointer;
+    background: var(--kr-step-off);
+    color: var(--kr-text);
+    transition: all 0.08s;
+    min-width: 20px; text-align: center;
+    text-transform: uppercase; letter-spacing: 1px;
+  }
+  .kr-bank-btn:hover { background: var(--kr-step-hover); border-color: var(--kr-accent-dim); }
+  .kr-bank-btn.kr-bank-active {
     background: var(--kr-accent);
     color: #000;
     border-color: var(--kr-accent);
@@ -1658,6 +1786,7 @@
   <div class="controls">
     <div style="display:flex;gap:10px;align-items:center;">
       <button class="btn play-btn" id="playBtn" onclick="togglePlay()">▶ PLAY</button>
+      <button class="btn rec-btn" id="recBtn" onclick="toggleRecord()">⬤ REC</button>
       <button class="onoff-btn onoff-on" id="onoff-crunch" onclick="toggleInstrument('crunch')">ON</button>
     </div>
     <div class="control-group">
@@ -1689,6 +1818,12 @@
       </div>
     </div>
     <button class="btn" onclick="clearAll()">CLEAR</button>
+    <div class="bank-btns">
+      <span class="bank-label">Bank</span>
+      <button class="bank-btn bank-active" id="crunchBank1" onclick="crunchSwitchBank(0)">1</button>
+      <button class="bank-btn" id="crunchBank2" onclick="crunchSwitchBank(1)">2</button>
+      <button class="bank-btn" id="crunchBank3" onclick="crunchSwitchBank(2)">3</button>
+    </div>
     <div class="control-group">
       <label>Aux Send</label>
       <select id="crunchAuxSelect" onchange="crunchAuxSend=this.value" style="font-family:'Press Start 2P',monospace;font-size:7px;padding:6px 8px;background:var(--step-off);color:var(--text);border:3px solid;border-color:#555 #222 #222 #555;cursor:pointer;appearance:none;-webkit-appearance:none;">
@@ -1789,6 +1924,12 @@
     </div>
 
     <button class="ch-btn" onclick="chClear()" style="align-self:flex-end;">Clear</button>
+    <div class="ch-bank-btns" style="align-self:flex-end;">
+      <span class="bank-label">Bank</span>
+      <button class="ch-bank-btn ch-bank-active" id="chBank1" onclick="chSwitchBank(0)">1</button>
+      <button class="ch-bank-btn" id="chBank2" onclick="chSwitchBank(1)">2</button>
+      <button class="ch-bank-btn" id="chBank3" onclick="chSwitchBank(2)">3</button>
+    </div>
     <button class="onoff-btn onoff-on" id="onoff-chanter" onclick="toggleInstrument('chanter')" style="align-self:flex-end;">ON</button>
   </div>
 
@@ -1838,6 +1979,12 @@
     </div>
 
     <button class="hr-btn" onclick="hrClear()">Clear</button>
+    <div class="hr-bank-btns">
+      <span class="bank-label">Bank</span>
+      <button class="hr-bank-btn hr-bank-active" id="hrBank1" onclick="hrSwitchBank(0)">1</button>
+      <button class="hr-bank-btn" id="hrBank2" onclick="hrSwitchBank(1)">2</button>
+      <button class="hr-bank-btn" id="hrBank3" onclick="hrSwitchBank(2)">3</button>
+    </div>
     <button class="onoff-btn onoff-on" id="onoff-harmonise" onclick="toggleInstrument('harmonise')">ON</button>
 
     <div class="hr-ctrl-group">
@@ -1905,6 +2052,12 @@
     </div>
 
     <button class="kr-btn" onclick="krClear()">Clear</button>
+    <div class="kr-bank-btns">
+      <span class="bank-label">Bank</span>
+      <button class="kr-bank-btn kr-bank-active" id="krBank1" onclick="krSwitchBank(0)">1</button>
+      <button class="kr-bank-btn" id="krBank2" onclick="krSwitchBank(1)">2</button>
+      <button class="kr-bank-btn" id="krBank3" onclick="krSwitchBank(2)">3</button>
+    </div>
     <button class="onoff-btn onoff-on" id="onoff-kevs" onclick="toggleInstrument('kevs')">ON</button>
 
     <div class="kr-ctrl-group">
@@ -2199,6 +2352,13 @@ function initAuxBuses() {
       filt.frequency.linearRampToValueAtTime(600 + Math.random() * 2000, ctx2.currentTime + 0.5);
     }, 2000);
   }
+
+  // If recording is already in progress, connect aux wet outputs to record dest
+  if (recording && recordDest) {
+    Object.values(auxBuses).forEach(bus => {
+      if (bus.wet) bus.wet.connect(recordDest);
+    });
+  }
 }
 
 function getAuxInput(slotName) {
@@ -2253,10 +2413,11 @@ function auxFlash(slotName) {
   el._flashT = setTimeout(() => el.classList.remove('lit'), 200);
 }
 
-// Helper: connect a node to both destination and aux send
+// Helper: connect a node to both destination and aux send (and recording if active)
 function connectWithAux(node, auxSlotName) {
   const ctx = getAudioCtx();
   node.connect(ctx.destination);
+  if (recording && recordDest) node.connect(recordDest);
   if (auxSlotName !== 'none') {
     initAuxBuses();
     const auxIn = getAuxInput(auxSlotName);
@@ -2297,6 +2458,30 @@ CHANNELS.forEach(ch => {
   volumes[ch] = 0.8;
   distortions[ch] = false;
 });
+
+// Pattern banks for Crunch (3 banks)
+let crunchCurrentBank = 0;
+let crunchBanks = [null, null, null]; // lazy: bank 0 is the live `pattern`
+
+function crunchSaveCurrentBank() {
+  const saved = {};
+  CHANNELS.forEach(ch => { saved[ch] = pattern[ch].slice(); });
+  crunchBanks[crunchCurrentBank] = saved;
+}
+
+function crunchSwitchBank(bankIdx) {
+  if (bankIdx === crunchCurrentBank) return;
+  crunchSaveCurrentBank();
+  crunchCurrentBank = bankIdx;
+  if (crunchBanks[bankIdx]) {
+    CHANNELS.forEach(ch => { pattern[ch] = crunchBanks[bankIdx][ch].slice(); });
+  } else {
+    CHANNELS.forEach(ch => { pattern[ch] = new Array(getSteps()).fill(false); });
+  }
+  buildGrid();
+  updateStepHighlight();
+  document.querySelectorAll('.bank-btn').forEach((b, i) => b.classList.toggle('bank-active', i === bankIdx));
+}
 
 function createDistortion(ctx) {
   const ws = ctx.createWaveShaper();
@@ -2574,6 +2759,28 @@ let chVol = 0.7;
 let chOctave = 4;
 let chCurrentStep = -1;
 
+// Pattern banks for Chanter (3 banks)
+let chCurrentBank = 0;
+let chBanks = [null, null, null];
+
+function chSaveCurrentBank() {
+  chBanks[chCurrentBank] = chPattern.map(row => row.slice());
+}
+
+function chSwitchBank(bankIdx) {
+  if (bankIdx === chCurrentBank) return;
+  chSaveCurrentBank();
+  chCurrentBank = bankIdx;
+  if (chBanks[bankIdx]) {
+    chPattern = chBanks[bankIdx].map(row => row.slice());
+  } else {
+    chPattern = Array.from({ length: CH_NUM_ROWS }, () => new Array(getInstSteps()).fill(false));
+  }
+  chBuildGrid();
+  chUpdatePlayhead();
+  document.querySelectorAll('.ch-bank-btn').forEach((b, i) => b.classList.toggle('ch-bank-active', i === bankIdx));
+}
+
 // --- Chanter Synth Voices ---
 function chPlayNote(noteIndex) {
   const ctx = getAudioCtx();
@@ -2848,6 +3055,28 @@ let hrOctave = 3;
 let hrVoicing = 'close'; // 'close' or 'open'
 let hrCurrentStep = -1;
 
+// Pattern banks for Harmonise (3 banks)
+let hrCurrentBank = 0;
+let hrBanks = [null, null, null];
+
+function hrSaveCurrentBank() {
+  hrBanks[hrCurrentBank] = hrPattern.slice();
+}
+
+function hrSwitchBank(bankIdx) {
+  if (bankIdx === hrCurrentBank) return;
+  hrSaveCurrentBank();
+  hrCurrentBank = bankIdx;
+  if (hrBanks[bankIdx]) {
+    hrPattern = hrBanks[bankIdx].slice();
+  } else {
+    hrPattern = new Array(getInstSteps()).fill(-1);
+  }
+  hrBuildGrid();
+  hrUpdatePlayhead();
+  document.querySelectorAll('.hr-bank-btn').forEach((b, i) => b.classList.toggle('hr-bank-active', i === bankIdx));
+}
+
 function hrPlayChord(chordIndex) {
   const ctx = getAudioCtx();
   const chords = hrGetChords();
@@ -3056,6 +3285,28 @@ let krVoice = 'clean';
 let krVol = 0.7;
 let krOctave = 2;
 let krCurrentStep = -1;
+
+// Pattern banks for Kev's Revenge (3 banks)
+let krCurrentBank = 0;
+let krBanks = [null, null, null];
+
+function krSaveCurrentBank() {
+  krBanks[krCurrentBank] = krPattern.map(row => row.slice());
+}
+
+function krSwitchBank(bankIdx) {
+  if (bankIdx === krCurrentBank) return;
+  krSaveCurrentBank();
+  krCurrentBank = bankIdx;
+  if (krBanks[bankIdx]) {
+    krPattern = krBanks[bankIdx].map(row => row.slice());
+  } else {
+    krPattern = Array.from({ length: KR_NUM_ROWS }, () => new Array(getInstSteps()).fill(false));
+  }
+  krBuildGrid();
+  krUpdatePlayhead();
+  document.querySelectorAll('.kr-bank-btn').forEach((b, i) => b.classList.toggle('kr-bank-active', i === bankIdx));
+}
 
 // --- Bass Synth Voices ---
 function krPlayNote(noteIndex) {
@@ -3353,6 +3604,91 @@ function scheduleStep() {
   }
 }
 
+// ==================================================
+// AUDIO RECORDING & EXPORT
+// ==================================================
+let recording = false;
+let mediaRecorder = null;
+let recordedChunks = [];
+let recordDest = null;
+
+function initRecordDest() {
+  if (recordDest) return;
+  const ctx = getAudioCtx();
+  recordDest = ctx.createMediaStreamDestination();
+}
+
+function toggleRecord() {
+  if (recording) {
+    stopRecording();
+  } else {
+    startRecording();
+  }
+}
+
+function startRecording() {
+  if (!audioCtx) initBuffers();
+  const ctx = getAudioCtx();
+  initRecordDest();
+  recordedChunks = [];
+
+  // Connect aux bus wet outputs to recording destination
+  if (auxInited) {
+    Object.values(auxBuses).forEach(bus => {
+      if (bus.wet) bus.wet.connect(recordDest);
+    });
+  }
+
+  // Determine best supported format
+  const mimeTypes = ['audio/webm;codecs=opus', 'audio/webm', 'audio/ogg;codecs=opus', 'audio/mp4'];
+  let mimeType = '';
+  for (const mt of mimeTypes) {
+    if (MediaRecorder.isTypeSupported(mt)) { mimeType = mt; break; }
+  }
+
+  const opts = mimeType ? { mimeType } : {};
+  mediaRecorder = new MediaRecorder(recordDest.stream, opts);
+  mediaRecorder.ondataavailable = (e) => { if (e.data.size > 0) recordedChunks.push(e.data); };
+  mediaRecorder.onstop = () => exportRecording(mimeType);
+  mediaRecorder.start();
+
+  recording = true;
+  document.getElementById('recBtn').classList.add('recording');
+  document.getElementById('recBtn').innerHTML = '⬤ STOP';
+
+  // Auto-start playback if not already playing
+  if (!playing) togglePlay();
+}
+
+function stopRecording() {
+  if (mediaRecorder && mediaRecorder.state !== 'inactive') {
+    mediaRecorder.stop();
+  }
+  // Disconnect aux bus wet outputs from recording destination
+  if (auxInited && recordDest) {
+    Object.values(auxBuses).forEach(bus => {
+      try { if (bus.wet) bus.wet.disconnect(recordDest); } catch (e) {}
+    });
+  }
+  recording = false;
+  document.getElementById('recBtn').classList.remove('recording');
+  document.getElementById('recBtn').innerHTML = '⬤ REC';
+}
+
+function exportRecording(mimeType) {
+  if (recordedChunks.length === 0) return;
+  const blob = new Blob(recordedChunks, { type: mimeType || 'audio/webm' });
+  const ext = mimeType.includes('mp4') ? 'mp4' : mimeType.includes('ogg') ? 'ogg' : 'webm';
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'toy-sequencer-' + new Date().toISOString().slice(0, 19).replace(/[T:]/g, '-') + '.' + ext;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  setTimeout(() => URL.revokeObjectURL(url), 5000);
+}
+
 function togglePlay() {
   if (!audioCtx) initBuffers();
   if (playing) {
@@ -3376,6 +3712,7 @@ function togglePlay() {
 }
 
 function stopSeq() {
+  if (recording) stopRecording();
   playing = false;
   clearTimeout(intervalId);
   masterStep = -1;
@@ -3415,6 +3752,11 @@ function changeTimeSig(val) {
   const wasPlaying = playing;
   if (wasPlaying) stopSeq();
   timeSig = val;
+  // Reset all pattern banks when time sig changes (step counts change)
+  crunchBanks = [null, null, null];
+  chBanks = [null, null, null];
+  hrBanks = [null, null, null];
+  krBanks = [null, null, null];
   buildGrid();
   chBuildGrid(); hrBuildGrid(); krBuildGrid();
   updateLed(); chUpdateStatus(); hrUpdateStatus(); krUpdateStatus();
