@@ -740,14 +740,13 @@
   /* Chanter piano-roll grid */
   .ch-grid-wrap {
     padding: 16px 28px 20px;
-    overflow-x: auto;
+    overflow-x: hidden;
   }
 
   .ch-grid {
     display: flex;
     flex-direction: column;
     gap: 0;
-    min-width: fit-content;
   }
 
   .ch-row {
@@ -776,9 +775,9 @@
   }
 
   .ch-cell {
-    width: 22px;
+    flex: 1;
+    min-width: 0;
     height: 18px;
-    flex-shrink: 0;
     background: var(--ch-step-off);
     border: 1px solid transparent;
     border-radius: 3px;
@@ -822,8 +821,8 @@
     margin-bottom: 4px;
   }
   .ch-ruler-mark {
-    width: 22px;
-    flex-shrink: 0;
+    flex: 1;
+    min-width: 0;
     text-align: center;
     font-size: 9px;
     font-style: italic;
@@ -839,8 +838,8 @@
     margin-top: 6px;
   }
   .ch-ph-pip {
-    width: 22px;
-    flex-shrink: 0;
+    flex: 1;
+    min-width: 0;
     height: 3px;
     background: var(--ch-step-off);
     border-radius: 1.5px;
@@ -1022,7 +1021,7 @@
   /* Chord grid */
   .hr-grid-wrap {
     padding: 16px 24px 20px;
-    overflow-x: auto;
+    overflow-x: hidden;
   }
 
   .hr-ruler {
@@ -1031,8 +1030,8 @@
     margin-bottom: 6px;
   }
   .hr-ruler-mark {
-    width: 24px;
-    flex-shrink: 0;
+    flex: 1;
+    min-width: 0;
     text-align: center;
     font-size: 8px;
     color: var(--hr-text-dim);
@@ -1072,9 +1071,9 @@
   }
 
   .hr-cell {
-    width: 24px;
+    flex: 1;
+    min-width: 0;
     height: 22px;
-    flex-shrink: 0;
     background: var(--hr-step-off);
     border: 1px solid rgba(90, 45, 138, 0.5);
     cursor: pointer;
@@ -1112,8 +1111,8 @@
     margin-top: 8px;
   }
   .hr-ph-pip {
-    width: 24px;
-    flex-shrink: 0;
+    flex: 1;
+    min-width: 0;
     height: 4px;
     background: var(--hr-step-off);
   }
@@ -1332,7 +1331,7 @@
   /* Bass grid */
   .kr-grid-wrap {
     padding: 16px 24px 20px;
-    overflow-x: auto;
+    overflow-x: hidden;
   }
 
   .kr-ruler {
@@ -1342,8 +1341,8 @@
     margin-bottom: 6px;
   }
   .kr-ruler-mark {
-    width: 24px;
-    flex-shrink: 0;
+    flex: 1;
+    min-width: 0;
     text-align: center;
     font-size: 8px;
     color: var(--kr-text-dim);
@@ -1372,12 +1371,13 @@
   .kr-cells {
     display: flex;
     gap: 3px;
+    flex: 1;
   }
 
   .kr-cell {
-    width: 24px;
+    flex: 1;
+    min-width: 0;
     height: 20px;
-    flex-shrink: 0;
     background: var(--kr-step-off);
     border: 1px solid rgba(60,0,0,0.8);
     cursor: pointer;
@@ -1406,8 +1406,8 @@
     margin-top: 8px;
   }
   .kr-ph-pip {
-    width: 24px;
-    flex-shrink: 0;
+    flex: 1;
+    min-width: 0;
     height: 4px;
     background: var(--kr-step-off);
     border: 1px solid #1a0000;
@@ -1754,18 +1754,12 @@
     .title { font-size: 10px; }
     .machine input[type="range"] { width: 55px; }
     .controls { gap: 12px; }
-    .ch-cell { width: 18px; height: 15px; }
-    .ch-ruler-mark { width: 18px; }
-    .ch-ph-pip { width: 18px; }
+    .ch-cell { height: 15px; }
     .ch-row-label { width: 34px; font-size: 10px; }
     .ch-grid-wrap { padding: 12px 14px 16px; }
-    .hr-cell { width: 18px; height: 17px; }
-    .hr-ruler-mark { width: 18px; }
-    .hr-ph-pip { width: 18px; }
+    .hr-cell { height: 17px; }
     .hr-row-label { width: 44px; font-size: 8px; }
-    .kr-cell { width: 18px; height: 16px; }
-    .kr-ruler-mark { width: 18px; }
-    .kr-ph-pip { width: 18px; }
+    .kr-cell { height: 16px; }
     .kr-row-label { width: 34px; font-size: 9px; }
     .pedal-board { flex-direction: column; align-items: center; }
     .pedal { width: 100%; max-width: 280px; }
@@ -2217,6 +2211,28 @@ function syncActiveStates() {
   hrActive = hrPending;
   krActive = krPending;
   updateOnOffButtons();
+
+  // Apply any pending bank switches at loop boundary
+  if (crunchPendingBank !== null) {
+    crunchSaveCurrentBank();
+    crunchApplyBank(crunchPendingBank);
+    crunchPendingBank = null;
+  }
+  if (chPendingBank !== null) {
+    chSaveCurrentBank();
+    chApplyBank(chPendingBank);
+    chPendingBank = null;
+  }
+  if (hrPendingBank !== null) {
+    hrSaveCurrentBank();
+    hrApplyBank(hrPendingBank);
+    hrPendingBank = null;
+  }
+  if (krPendingBank !== null) {
+    krSaveCurrentBank();
+    krApplyBank(krPendingBank);
+    krPendingBank = null;
+  }
 }
 
 function updateOnOffButtons() {
@@ -2461,6 +2477,7 @@ CHANNELS.forEach(ch => {
 
 // Pattern banks for Crunch (3 banks)
 let crunchCurrentBank = 0;
+let crunchPendingBank = null; // queued bank switch
 let crunchBanks = [null, null, null]; // lazy: bank 0 is the live `pattern`
 
 function crunchSaveCurrentBank() {
@@ -2469,9 +2486,7 @@ function crunchSaveCurrentBank() {
   crunchBanks[crunchCurrentBank] = saved;
 }
 
-function crunchSwitchBank(bankIdx) {
-  if (bankIdx === crunchCurrentBank) return;
-  crunchSaveCurrentBank();
+function crunchApplyBank(bankIdx) {
   crunchCurrentBank = bankIdx;
   if (crunchBanks[bankIdx]) {
     CHANNELS.forEach(ch => { pattern[ch] = crunchBanks[bankIdx][ch].slice(); });
@@ -2480,7 +2495,20 @@ function crunchSwitchBank(bankIdx) {
   }
   buildGrid();
   updateStepHighlight();
-  document.querySelectorAll('.bank-btn').forEach((b, i) => b.classList.toggle('bank-active', i === bankIdx));
+}
+
+function crunchSwitchBank(bankIdx) {
+  if (bankIdx === crunchCurrentBank && crunchPendingBank === null) return;
+  crunchSaveCurrentBank();
+  if (playing) {
+    crunchPendingBank = bankIdx;
+  } else {
+    crunchApplyBank(bankIdx);
+  }
+  document.querySelectorAll('.bank-btn').forEach((b, i) => {
+    const target = crunchPendingBank !== null ? crunchPendingBank : crunchCurrentBank;
+    b.classList.toggle('bank-active', i === target);
+  });
 }
 
 function createDistortion(ctx) {
@@ -2761,15 +2789,14 @@ let chCurrentStep = -1;
 
 // Pattern banks for Chanter (3 banks)
 let chCurrentBank = 0;
+let chPendingBank = null;
 let chBanks = [null, null, null];
 
 function chSaveCurrentBank() {
   chBanks[chCurrentBank] = chPattern.map(row => row.slice());
 }
 
-function chSwitchBank(bankIdx) {
-  if (bankIdx === chCurrentBank) return;
-  chSaveCurrentBank();
+function chApplyBank(bankIdx) {
   chCurrentBank = bankIdx;
   if (chBanks[bankIdx]) {
     chPattern = chBanks[bankIdx].map(row => row.slice());
@@ -2778,7 +2805,20 @@ function chSwitchBank(bankIdx) {
   }
   chBuildGrid();
   chUpdatePlayhead();
-  document.querySelectorAll('.ch-bank-btn').forEach((b, i) => b.classList.toggle('ch-bank-active', i === bankIdx));
+}
+
+function chSwitchBank(bankIdx) {
+  if (bankIdx === chCurrentBank && chPendingBank === null) return;
+  chSaveCurrentBank();
+  if (playing) {
+    chPendingBank = bankIdx;
+  } else {
+    chApplyBank(bankIdx);
+  }
+  document.querySelectorAll('.ch-bank-btn').forEach((b, i) => {
+    const target = chPendingBank !== null ? chPendingBank : chCurrentBank;
+    b.classList.toggle('ch-bank-active', i === target);
+  });
 }
 
 // --- Chanter Synth Voices ---
@@ -3057,15 +3097,14 @@ let hrCurrentStep = -1;
 
 // Pattern banks for Harmonise (3 banks)
 let hrCurrentBank = 0;
+let hrPendingBank = null;
 let hrBanks = [null, null, null];
 
 function hrSaveCurrentBank() {
   hrBanks[hrCurrentBank] = hrPattern.slice();
 }
 
-function hrSwitchBank(bankIdx) {
-  if (bankIdx === hrCurrentBank) return;
-  hrSaveCurrentBank();
+function hrApplyBank(bankIdx) {
   hrCurrentBank = bankIdx;
   if (hrBanks[bankIdx]) {
     hrPattern = hrBanks[bankIdx].slice();
@@ -3074,7 +3113,20 @@ function hrSwitchBank(bankIdx) {
   }
   hrBuildGrid();
   hrUpdatePlayhead();
-  document.querySelectorAll('.hr-bank-btn').forEach((b, i) => b.classList.toggle('hr-bank-active', i === bankIdx));
+}
+
+function hrSwitchBank(bankIdx) {
+  if (bankIdx === hrCurrentBank && hrPendingBank === null) return;
+  hrSaveCurrentBank();
+  if (playing) {
+    hrPendingBank = bankIdx;
+  } else {
+    hrApplyBank(bankIdx);
+  }
+  document.querySelectorAll('.hr-bank-btn').forEach((b, i) => {
+    const target = hrPendingBank !== null ? hrPendingBank : hrCurrentBank;
+    b.classList.toggle('hr-bank-active', i === target);
+  });
 }
 
 function hrPlayChord(chordIndex) {
@@ -3288,15 +3340,14 @@ let krCurrentStep = -1;
 
 // Pattern banks for Kev's Revenge (3 banks)
 let krCurrentBank = 0;
+let krPendingBank = null;
 let krBanks = [null, null, null];
 
 function krSaveCurrentBank() {
   krBanks[krCurrentBank] = krPattern.map(row => row.slice());
 }
 
-function krSwitchBank(bankIdx) {
-  if (bankIdx === krCurrentBank) return;
-  krSaveCurrentBank();
+function krApplyBank(bankIdx) {
   krCurrentBank = bankIdx;
   if (krBanks[bankIdx]) {
     krPattern = krBanks[bankIdx].map(row => row.slice());
@@ -3305,7 +3356,20 @@ function krSwitchBank(bankIdx) {
   }
   krBuildGrid();
   krUpdatePlayhead();
-  document.querySelectorAll('.kr-bank-btn').forEach((b, i) => b.classList.toggle('kr-bank-active', i === bankIdx));
+}
+
+function krSwitchBank(bankIdx) {
+  if (bankIdx === krCurrentBank && krPendingBank === null) return;
+  krSaveCurrentBank();
+  if (playing) {
+    krPendingBank = bankIdx;
+  } else {
+    krApplyBank(bankIdx);
+  }
+  document.querySelectorAll('.kr-bank-btn').forEach((b, i) => {
+    const target = krPendingBank !== null ? krPendingBank : krCurrentBank;
+    b.classList.toggle('kr-bank-active', i === target);
+  });
 }
 
 // --- Bass Synth Voices ---
