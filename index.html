@@ -227,6 +227,25 @@
     text-shadow: none;
   }
 
+  /* Record button */
+  .btn.rec-btn {
+    background: #331111;
+    border-color: #cc3333 #661111 #661111 #cc3333;
+    color: #cc3333;
+    letter-spacing: 1px;
+  }
+  .btn.rec-btn:hover { background: #441515; }
+  .btn.rec-btn.recording {
+    background: #cc2222;
+    color: #fff;
+    border-color: #ff4444 #881111 #881111 #ff4444;
+    animation: rec-pulse 1s ease-in-out infinite;
+  }
+  @keyframes rec-pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.6; }
+  }
+
   .btn.play-btn {
     background: #003322;
     border-color: var(--accent) #005533 #005533 var(--accent);
@@ -1767,6 +1786,7 @@
   <div class="controls">
     <div style="display:flex;gap:10px;align-items:center;">
       <button class="btn play-btn" id="playBtn" onclick="togglePlay()">▶ PLAY</button>
+      <button class="btn rec-btn" id="recBtn" onclick="toggleRecord()">⬤ REC</button>
       <button class="onoff-btn onoff-on" id="onoff-crunch" onclick="toggleInstrument('crunch')">ON</button>
     </div>
     <div class="control-group">
@@ -2332,6 +2352,13 @@ function initAuxBuses() {
       filt.frequency.linearRampToValueAtTime(600 + Math.random() * 2000, ctx2.currentTime + 0.5);
     }, 2000);
   }
+
+  // If recording is already in progress, connect aux wet outputs to record dest
+  if (recording && recordDest) {
+    Object.values(auxBuses).forEach(bus => {
+      if (bus.wet) bus.wet.connect(recordDest);
+    });
+  }
 }
 
 function getAuxInput(slotName) {
@@ -2386,10 +2413,11 @@ function auxFlash(slotName) {
   el._flashT = setTimeout(() => el.classList.remove('lit'), 200);
 }
 
-// Helper: connect a node to both destination and aux send
+// Helper: connect a node to both destination and aux send (and recording if active)
 function connectWithAux(node, auxSlotName) {
   const ctx = getAudioCtx();
   node.connect(ctx.destination);
+  if (recording && recordDest) node.connect(recordDest);
   if (auxSlotName !== 'none') {
     initAuxBuses();
     const auxIn = getAuxInput(auxSlotName);
@@ -3576,6 +3604,91 @@ function scheduleStep() {
   }
 }
 
+// ==================================================
+// AUDIO RECORDING & EXPORT
+// ==================================================
+let recording = false;
+let mediaRecorder = null;
+let recordedChunks = [];
+let recordDest = null;
+
+function initRecordDest() {
+  if (recordDest) return;
+  const ctx = getAudioCtx();
+  recordDest = ctx.createMediaStreamDestination();
+}
+
+function toggleRecord() {
+  if (recording) {
+    stopRecording();
+  } else {
+    startRecording();
+  }
+}
+
+function startRecording() {
+  if (!audioCtx) initBuffers();
+  const ctx = getAudioCtx();
+  initRecordDest();
+  recordedChunks = [];
+
+  // Connect aux bus wet outputs to recording destination
+  if (auxInited) {
+    Object.values(auxBuses).forEach(bus => {
+      if (bus.wet) bus.wet.connect(recordDest);
+    });
+  }
+
+  // Determine best supported format
+  const mimeTypes = ['audio/webm;codecs=opus', 'audio/webm', 'audio/ogg;codecs=opus', 'audio/mp4'];
+  let mimeType = '';
+  for (const mt of mimeTypes) {
+    if (MediaRecorder.isTypeSupported(mt)) { mimeType = mt; break; }
+  }
+
+  const opts = mimeType ? { mimeType } : {};
+  mediaRecorder = new MediaRecorder(recordDest.stream, opts);
+  mediaRecorder.ondataavailable = (e) => { if (e.data.size > 0) recordedChunks.push(e.data); };
+  mediaRecorder.onstop = () => exportRecording(mimeType);
+  mediaRecorder.start();
+
+  recording = true;
+  document.getElementById('recBtn').classList.add('recording');
+  document.getElementById('recBtn').innerHTML = '⬤ STOP';
+
+  // Auto-start playback if not already playing
+  if (!playing) togglePlay();
+}
+
+function stopRecording() {
+  if (mediaRecorder && mediaRecorder.state !== 'inactive') {
+    mediaRecorder.stop();
+  }
+  // Disconnect aux bus wet outputs from recording destination
+  if (auxInited && recordDest) {
+    Object.values(auxBuses).forEach(bus => {
+      try { if (bus.wet) bus.wet.disconnect(recordDest); } catch (e) {}
+    });
+  }
+  recording = false;
+  document.getElementById('recBtn').classList.remove('recording');
+  document.getElementById('recBtn').innerHTML = '⬤ REC';
+}
+
+function exportRecording(mimeType) {
+  if (recordedChunks.length === 0) return;
+  const blob = new Blob(recordedChunks, { type: mimeType || 'audio/webm' });
+  const ext = mimeType.includes('mp4') ? 'mp4' : mimeType.includes('ogg') ? 'ogg' : 'webm';
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'toy-sequencer-' + new Date().toISOString().slice(0, 19).replace(/[T:]/g, '-') + '.' + ext;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  setTimeout(() => URL.revokeObjectURL(url), 5000);
+}
+
 function togglePlay() {
   if (!audioCtx) initBuffers();
   if (playing) {
@@ -3599,6 +3712,7 @@ function togglePlay() {
 }
 
 function stopSeq() {
+  if (recording) stopRecording();
   playing = false;
   clearTimeout(intervalId);
   masterStep = -1;
